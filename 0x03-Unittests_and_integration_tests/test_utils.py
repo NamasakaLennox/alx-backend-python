@@ -57,7 +57,7 @@ class TestGetJson(unittest.TestCase):
 class TestMemoize(unittest.TestCase):
     """A test calss for the memoize decorator function
     """
-    def test_mock(self):
+    def test_memoize(self):
         """A test method for the memoize function
         """
         class TestClass:
@@ -75,8 +75,6 @@ class TestMemoize(unittest.TestCase):
                 return self.a_method()
 
         with mock.patch.object(TestClass, 'a_method', return_value=42) as temp:
-            test = TestClass()
+            self.assertEqual(temp.test.a_property, 42)
             self.assertEqual(test.a_property, 42)
-            self.assertEqual(test.a_property, 42)
-
         temp.assert_called_once()
