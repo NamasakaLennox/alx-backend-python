@@ -4,7 +4,8 @@ A test module for the client module
 """
 import unittest
 from unittest.mock import Mock, patch, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
+from fixtures import TEST_PAYLOAD
 
 GithubOrgClient = __import__('client').GithubOrgClient
 
@@ -62,3 +63,32 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         res = GithubOrgClient.has_license(repo, key)
         self.assertEqual(res, expected)
+
+
+@parameterized_class(['org_payload', 'repos_payload',
+                      'expected_repos', 'apache2_repos'],
+                     TEST_PAYLOAD)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Testing in an integration test.
+    Only mock code that sends external requests
+    """
+    @classmethod
+    def setUpClass(cls):
+        """setup method for the class
+        """
+        cls.get_patcher = patch('requests.get', side_effect=[
+            cls.org_payload, cls.repos_payload
+        ])
+        cls.mocked_get = cls.get_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls):
+        """teardown method for the class
+        """
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """test public repos """
+
+    def test_public_repos_with_license(self):
+        """test public with license"""
